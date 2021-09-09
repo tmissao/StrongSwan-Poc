@@ -27,7 +27,7 @@ conn bridge
         ike=aes256-sha256-modp2048!
         esp=aes256-sha256-modp2048!
         aggressive=no
-        keyingtries=%forever
+        keyingtries='%forever'
         ikelifetime=28800s
         lifetime=3600s
         dpddelay=30s

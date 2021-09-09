@@ -28,6 +28,10 @@ variable "bridge_vm_public_ip"{}
 
 variable "resource_group_name" {}
 
+variable "strongswan_setup" {
+  default = true
+}
+
 variable "strongswan_right_public_ip" {}
 
 variable "strongswan_right_subnet" {}

@@ -88,7 +88,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
   location = var.vnet_location
   resource_group_name = var.resource_group_name
   network_interface_ids = [azurerm_network_interface.vm.id]
-  custom_data = data.template_cloudinit_config.config.rendered
+  custom_data = var.strongswan_setup ? data.template_cloudinit_config.config.rendered : null
   size = "Standard_B2s"
   source_image_reference {
     publisher = "Canonical"

@@ -1,0 +1,73 @@
+---
+- hosts: control
+  gather_facts: true
+  tasks:
+  - name: Install Galaxy Roles
+    command: "ansible-galaxy install {{ item }}"
+    with_items:
+    - "nginxinc.nginx,0.12.0"
+    - "torian.strongswan,0.1.1" 
+
+- hosts: vms
+  gather_facts: true
+  tasks:
+
+  - name: Install Python3
+    package:
+      name: python3
+      state: present
+
+  - name: Reload StrongSwan
+    command: "ipsec {{ item }}"
+    with_items:
+    - "rereadsecrets"
+    - "reload"
+
+  - name: Sleep for 10 seconds and continue with play
+    wait_for:
+      timeout: 10
+  
+  - name: Ipsec Status
+    command: "ipsec status"
+    register: ipsec_status
+
+  - name: Show ipsec_status 
+    debug:
+      var: ipsec_status.stdout
+
+  roles:
+    - role: torian.strongswan
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+        strongswan_secrets:
+        - right: '{{ strongswan_right_address }}'
+          type: PSK
+          credentials: '{{ strongswan_password }}'
+        - left: '{{ ansible_host }}'
+          type: PSK
+          credentials: '{{ strongswan_password }}'
+        strongswan_config_setup:
+          charondebug: "all"
+          uniqueids: "yes"
+        strongswan_conns:
+          bridge:
+            type: tunnel
+            auto: start
+            keyexchange: ikev2
+            left: '{{ private_ip }}'
+            leftid: '{{ ansible_host }}'
+            leftsubnet: '{{ subnet_address_space }}'
+            leftauth: psk
+            right: '{{ strongswan_right_address }}'
+            rightsubnet: '{{ strongswan_right_subnet }}'
+            rightauth: psk
+            ike: aes256-sha256-modp2048!
+            esp: aes256-sha256-modp2048!
+            aggressive: 'no'
+            keyingtries: '%forever'
+            ikelifetime: 28800s
+            lifetime: 3600s
+            dpddelay: 30s
+            dpdtimeout: 120s
+            dpdaction: restart
+...

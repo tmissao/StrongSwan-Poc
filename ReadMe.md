@@ -8,6 +8,7 @@ This project intends to build an IpSec VPN using StrongSwan. In order to do that
 - [Create an Azure Account](https://azure.microsoft.com/en-us/free/)
 - [Install TF_ENV](https://github.com/tfutils/tfenv)
 - Public SSH Key located on `~/.ssh/id_rsa.pub`
+- [Install Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
 
 ## How it Works ?
 ---
@@ -21,7 +22,26 @@ So, two Vnets completely isolated are created, and each vnet contains a subnet a
 ## Usage
 ---
 
+On this project it is possible to setup the VPN using just `terraform` or using `terraform + ansible`
+
+### `Terraform`
+
+Setup the variable `strongswan_ansible_setup` to `false` on [vars.tf](./src/terraform/vars.tf) file and run the following commands:
+
 ```bash
+cd src/terraform
+tfenv install
+tfenv use
+terraform init
+terraform apply
+```
+
+### `Terraform + Ansible`
+
+Setup the variable `strongswan_ansible_setup` to `true` on [vars.tf](./src/terraform/vars.tf) file and run the following commands:
+
+```bash
+cd src/terraform
 tfenv install
 tfenv use
 terraform init
